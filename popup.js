@@ -1,11 +1,5 @@
 let scanbtn = document.getElementById("scanbtn");
 let test = document.getElementById("test");
-let text = document.getElementById("text");
-
-
-//chrome.storage.sync.get("color", ({ color }) => {
-//  changeColor.style.backgroundColor = color;
-//});
 
 scanbtn.addEventListener("click", async () => {
     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -17,16 +11,10 @@ scanbtn.addEventListener("click", async () => {
 });
 
 test.addEventListener("click", async () => {
-    chrome.storage.local.get("following", ({ followers }) => {
-        text.innerText = followers
-    })
-    
+    chrome.tabs.create({ url: chrome.runtime.getURL("results.html") });
 });
 
-
-// The body of this function will be executed as a content script inside the
-// current page
-function scanPage() {
+const scanPage = () => {
     const isFollowers = document.querySelector('[aria-label="Seguidores"]') ? true : false
     const followerFocus = document.querySelector('[aria-label="Seguidores"]') ? document.querySelector('[aria-label="Seguidores"]') : document.querySelector('[aria-label="Seguidos"]')
     
@@ -36,7 +24,22 @@ function scanPage() {
 
     let scrapedata = []
 
-    var loop = setInterval(() => {
+    const saveData = (loop, data) => {
+        clearInterval(loop);
+        if (isFollowers == true) {
+                    const followers = data;
+                    chrome.storage.local.set({ followers });
+                } else {
+                    // This deletes the first two elements which are People and Hashtags
+                    data.shift();
+                    data.shift();
+                    const following = data;
+                    chrome.storage.local.set({ following });
+                    console.log(following)
+                }
+    }
+
+    const loop = setInterval(() => {
         try {
             const gordoguishe = document.getElementsByClassName("isgrP")[0];
             gordoguishe.scrollTop = gordoguishe.scrollHeight - gordoguishe.clientHeight;
@@ -44,19 +47,7 @@ function scanPage() {
             console.log(scrapedata);
             console.log(limit);
             if (scrapedata.length == limit) {
-                clearInterval(loop);
-
-                if (isFollowers == true) {
-                    const followers = scrapedata;
-                    chrome.storage.local.set({ followers });
-                } else {
-                    // This deletes the first two elements which are People and Hashtags
-                    scrapedata.shift();
-                    scrapedata.shift();
-                    const following = scrapedata;
-                    chrome.storage.local.set({ following });
-                    console.log(following)
-                }
+                saveData(loop, scrapedata);
             };
         } catch (err) {
             clearInterval(loop);
