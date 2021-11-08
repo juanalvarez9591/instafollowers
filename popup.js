@@ -17,8 +17,8 @@ scanbtn.addEventListener("click", async () => {
 });
 
 test.addEventListener("click", async () => {
-    chrome.storage.local.get("following", ({ following }) => {
-        text.innerText = following
+    chrome.storage.local.get("following", ({ followers }) => {
+        text.innerText = followers
     })
     
 });
@@ -32,28 +32,35 @@ function scanPage() {
     
     const max = document.getElementsByClassName("g47SY ")
 
-    const limit = document.querySelector('[aria-label="Seguidores"]') ? max[1].innerText : max[2].innerText + 2
+    const limit = document.querySelector('[aria-label="Seguidores"]') ? Number(max[1].innerText) : Number(max[2].innerText) + Number(2)
 
     let scrapedata = []
 
-    const loop = setInterval(() => {
-        const gordoguishe = document.getElementsByClassName("isgrP")[0];
-        gordoguishe.scrollTop = gordoguishe.scrollHeight - gordoguishe.clientHeight;
-        scrapedata = Array.from(followerFocus.getElementsByTagName("a")).map(i => i.innerText).filter(word => word.trim().length > 0)
-        console.log(scrapedata);
-        if (scrapedata.length == limit) {
+    var loop = setInterval(() => {
+        try {
+            const gordoguishe = document.getElementsByClassName("isgrP")[0];
+            gordoguishe.scrollTop = gordoguishe.scrollHeight - gordoguishe.clientHeight;
+            scrapedata = Array.from(followerFocus.getElementsByTagName("a")).map(i => i.innerText).filter(word => word.trim().length > 0)
+            console.log(scrapedata);
+            console.log(limit);
+            if (scrapedata.length == limit) {
+                clearInterval(loop);
+
+                if (isFollowers == true) {
+                    const followers = scrapedata;
+                    chrome.storage.local.set({ followers });
+                } else {
+                    // This deletes the first two elements which are People and Hashtags
+                    scrapedata.shift();
+                    scrapedata.shift();
+                    const following = scrapedata;
+                    chrome.storage.local.set({ following });
+                    console.log(following)
+                }
+            };
+        } catch (err) {
             clearInterval(loop);
-            if (isFollowers == true) {
-                const followers = scrapedata;
-                chrome.storage.local.set({ followers });
-            } else {
-                // This deletes the first two elements which are People and Hashtags
-                scrapedata.shift();
-                scrapedata.shift();
-                const following = scrapedata;
-                chrome.storage.local.set({ following });
-                console.log(following)
-            }
-        };
+            console.log("Error")
+        }
     }, 1000)
 }
