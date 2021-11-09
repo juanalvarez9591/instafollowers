@@ -50,7 +50,7 @@ const scanPage = () => {
                 saveData(loop, scrapedata);
             };
         } catch (err) {
-            clearInterval(loop);
+            saveData(loop, scrapedata);
             console.log("Error")
         }
     }, 1000)

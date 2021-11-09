@@ -28,7 +28,7 @@ h1 {
     justify-content: center;
 }
 
-#nonfollowers {
+#notfollowingback {
     display: flex;
     flex-direction: column;
     text-align: center;
@@ -40,6 +40,23 @@ h1 {
     flex-direction: column;
     text-align: center;
     margin: 0.5rem;
+}
+
+button {
+    margin: 0.5rem;
+}
+
+#popup{ 
+    width: 20rem;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+#popup h3 {
+    font-size: 1rem;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
