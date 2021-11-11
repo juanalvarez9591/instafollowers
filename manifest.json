@@ -1,10 +1,13 @@
 {
   "name": "Instafollowers",
-  "description": "Build an Extension!",
+  "description": "Descubrí quien te dejó de seguir en Instagram... Sin iniciar sesión, ni arriesgar tus datos",
   "version": "1.0",
   "manifest_version": 3,
   "permissions": ["storage", "activeTab", "scripting","tabs","unlimitedStorage"], 
   "action": {
     "default_popup": "popup.html"
+  },
+  "icons": {
+    "128": "logo.png"
   }
 }
